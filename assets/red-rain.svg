@@ -1,154 +1,165 @@
-<svg width="900" height="90" viewBox="0 0 900 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="900" height="78" viewBox="0 0 900 78" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="fadeBottom" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#FF3131" stop-opacity="0"/>
-      <stop offset="20%" stop-color="#FF3131" stop-opacity="0.35"/>
-      <stop offset="70%" stop-color="#FF3131" stop-opacity="0.85"/>
-      <stop offset="100%" stop-color="#FF3131" stop-opacity="0"/>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="12%" stop-color="#fff" stop-opacity=".55"/>
+      <stop offset="45%" stop-color="#fff"/>
+      <stop offset="82%" stop-color="#fff" stop-opacity=".9"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
     </linearGradient>
 
-    <mask id="fadeMask">
-      <rect width="900" height="90" fill="url(#fadeBottom)"/>
+    <mask id="mask">
+      <rect width="900" height="78" fill="url(#fade)"/>
     </mask>
 
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
     <style>
-      .bg {
-        fill: transparent;
-      }
-
       .rain {
-        font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-        font-size: 10px;
-        letter-spacing: 1px;
-        fill: #FF3131;
+        font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+        font-size: 11px;
+        letter-spacing: .7px;
+        fill: #ff3131;
       }
 
-      .dim { opacity: 0.18; }
-      .mid { opacity: 0.36; }
-      .high { opacity: 0.72; }
+      .faint { opacity: .34; }
+      .normal { opacity: .62; }
 
-      .scanline {
-        stroke: rgba(255, 49, 49, 0.12);
-        stroke-width: 1;
+      .bright {
+        opacity: .95;
+        filter: url(#glow);
+      }
+
+      .tip {
+        fill: #fff;
+        opacity: .92;
+        filter: url(#glow);
       }
     </style>
   </defs>
 
-  <rect class="bg" width="900" height="90"/>
+  <line x1="25" y1="77" x2="875" y2="77"
+        stroke="#ff3131" stroke-opacity=".2"/>
 
-  <!-- linha discreta pra dar acabamento -->
-  <line x1="0" y1="89.5" x2="900" y2="89.5" class="scanline"/>
+  <g mask="url(#mask)">
 
-  <g mask="url(#fadeMask)">
-    <!-- coluna 1 -->
-    <g class="rain dim">
-      <text x="20" y="-40">01010110</text>
-      <text x="20" y="-20">0x2F</text>
-      <text x="20" y="0">10100101</text>
-      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 130" dur="4.9s" repeatCount="indefinite"/>
+    <g class="rain normal">
+      <text x="15" y="-52">01010110</text>
+      <text x="15" y="-34">0x2F</text>
+      <text class="tip" x="15" y="-16">10100101</text>
+      <animateTransform attributeName="transform" type="translate"
+        from="0 0" to="0 145" dur="5.4s" repeatCount="indefinite"/>
     </g>
 
-    <!-- coluna 2 -->
-    <g class="rain mid">
-      <text x="75" y="-55">sudo</text>
-      <text x="75" y="-35">chmod</text>
-      <text x="75" y="-15">011001</text>
-      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 145" dur="6.4s" repeatCount="indefinite"/>
+    <g class="rain faint">
+      <text x="76" y="-65">sudo</text>
+      <text x="76" y="-47">chmod</text>
+      <text class="tip" x="76" y="-29">011001</text>
+      <animateTransform attributeName="transform" type="translate"
+        from="0 0" to="0 160" dur="7.1s" repeatCount="indefinite"/>
     </g>
 
-    <!-- coluna 3 -->
-    <g class="rain high">
-      <text x="135" y="-50">while(1)</text>
-      <text x="135" y="-30">{}</text>
-      <text x="135" y="-10">0xDEAD</text>
-      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 150" dur="7.2s" repeatCount="indefinite"/>
+    <g class="rain bright">
+      <text x="132" y="-58">while(1)</text>
+      <text x="132" y="-40">{ exec(); }</text>
+      <text class="tip" x="132" y="-22">0xDEAD</text>
+      <animateTransform attributeName="transform" type="translate"
+        from="0 0" to="0 155" dur="6.3s" repeatCount="indefinite"/>
     </g>
 
-    <!-- coluna 4 -->
-    <g class="rain dim">
-      <text x="205" y="-38">00101101</text>
-      <text x="205" y="-18">exec()</text>
-      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 128" dur="5.5s" repeatCount="indefinite"/>
+    <g class="rain normal">
+      <text x="205" y="-45">00101101</text>
+      <text x="205" y="-27">fork()</text>
+      <text class="tip" x="205" y="-9">exec()</text>
+      <animateTransform attributeName="transform" type="translate"
+        from="0 0" to="0 140" dur="5.8s" repeatCount="indefinite"/>
     </g>
 
-    <!-- coluna 5 -->
-    <g class="rain mid">
-      <text x="270" y="-60">/dev/null</text>
-      <text x="270" y="-40">100101</text>
-      <text x="270" y="-20">root</text>
-      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 150" dur="6.9s" repeatCount="indefinite"/>
+    <g class="rain faint">
+      <text x="270" y="-70">/dev/null</text>
+      <text x="270" y="-52">100101</text>
+      <text class="tip" x="270" y="-34">root</text>
+      <animateTransform attributeName="transform" type="translate"
+        from="0 0" to="0 165" dur="7.8s" repeatCount="indefinite"/>
     </g>
 
-    <!-- coluna 6 -->
-    <g class="rain high">
-      <text x="340" y="-48">printf()</text>
-      <text x="340" y="-28">0110</text>
-      <text x="340" y="-8">0xFF</text>
-      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 142" dur="5.8s" repeatCount="indefinite"/>
+    <g class="rain bright">
+      <text x="335" y="-55">printf()</text>
+      <text x="335" y="-37">0110</text>
+      <text class="tip" x="335" y="-19">0xFF</text>
+      <animateTransform attributeName="transform" type="translate"
+        from="0 0" to="0 150" dur="5.1s" repeatCount="indefinite"/>
     </g>
 
-    <!-- coluna 7 -->
-    <g class="rain dim">
-      <text x="405" y="-52">10101010</text>
-      <text x="405" y="-32">fork()</text>
-      <text x="405" y="-12">null</text>
-      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 150" dur="7.7s" repeatCount="indefinite"/>
+    <g class="rain faint">
+      <text x="402" y="-72">10101010</text>
+      <text x="402" y="-54">fork()</text>
+      <text class="tip" x="402" y="-36">null</text>
+      <animateTransform attributeName="transform" type="translate"
+        from="0 0" to="0 170" dur="8.2s" repeatCount="indefinite"/>
     </g>
 
-    <!-- coluna 8 -->
-    <g class="rain mid">
-      <text x="470" y="-45">payload</text>
-      <text x="470" y="-25">0x13</text>
-      <text x="470" y="-5">101101</text>
-      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 137" dur="6.1s" repeatCount="indefinite"/>
+    <g class="rain normal">
+      <text x="468" y="-50">payload</text>
+      <text x="468" y="-32">0x13</text>
+      <text class="tip" x="468" y="-14">101101</text>
+      <animateTransform attributeName="transform" type="translate"
+        from="0 0" to="0 145" dur="6.4s" repeatCount="indefinite"/>
     </g>
 
-    <!-- coluna 9 -->
-    <g class="rain high">
-      <text x="535" y="-62">access()</text>
-      <text x="535" y="-42">110011</text>
-      <text x="535" y="-22">sudo</text>
-      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 154" dur="7.4s" repeatCount="indefinite"/>
+    <g class="rain bright">
+      <text x="532" y="-67">access()</text>
+      <text x="532" y="-49">110011</text>
+      <text class="tip" x="532" y="-31">sudo</text>
+      <animateTransform attributeName="transform" type="translate"
+        from="0 0" to="0 165" dur="7s" repeatCount="indefinite"/>
     </g>
 
-    <!-- coluna 10 -->
-    <g class="rain dim">
-      <text x="605" y="-50">eth0</text>
-      <text x="605" y="-30">001101</text>
-      <text x="605" y="-10">ssh</text>
-      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 132" dur="5.2s" repeatCount="indefinite"/>
+    <g class="rain normal">
+      <text x="595" y="-48">eth0</text>
+      <text x="595" y="-30">001101</text>
+      <text class="tip" x="595" y="-12">ssh</text>
+      <animateTransform attributeName="transform" type="translate"
+        from="0 0" to="0 143" dur="5.5s" repeatCount="indefinite"/>
     </g>
 
-    <!-- coluna 11 -->
-    <g class="rain mid">
-      <text x="665" y="-58">hashcat</text>
-      <text x="665" y="-38">0xC0DE</text>
-      <text x="665" y="-18">111000</text>
-      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 150" dur="6.6s" repeatCount="indefinite"/>
+    <g class="rain faint">
+      <text x="652" y="-75">hashcat</text>
+      <text x="652" y="-57">0xC0DE</text>
+      <text class="tip" x="652" y="-39">111000</text>
+      <animateTransform attributeName="transform" type="translate"
+        from="0 0" to="0 175" dur="8s" repeatCount="indefinite"/>
     </g>
 
-    <!-- coluna 12 -->
-    <g class="rain high">
-      <text x="735" y="-48">./run</text>
-      <text x="735" y="-28">010110</text>
-      <text x="735" y="-8">bash</text>
-      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 140" dur="5.7s" repeatCount="indefinite"/>
+    <g class="rain bright">
+      <text x="715" y="-54">./run</text>
+      <text x="715" y="-36">010110</text>
+      <text class="tip" x="715" y="-18">bash</text>
+      <animateTransform attributeName="transform" type="translate"
+        from="0 0" to="0 150" dur="5.7s" repeatCount="indefinite"/>
     </g>
 
-    <!-- coluna 13 -->
-    <g class="rain dim">
-      <text x="795" y="-54">nmap</text>
-      <text x="795" y="-34">101111</text>
-      <text x="795" y="-14">grep</text>
-      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 148" dur="7.1s" repeatCount="indefinite"/>
+    <g class="rain normal">
+      <text x="775" y="-64">nmap</text>
+      <text x="775" y="-46">101111</text>
+      <text class="tip" x="775" y="-28">grep</text>
+      <animateTransform attributeName="transform" type="translate"
+        from="0 0" to="0 160" dur="6.8s" repeatCount="indefinite"/>
     </g>
 
-    <!-- coluna 14 -->
-    <g class="rain mid">
-      <text x="850" y="-42">0xBEEF</text>
-      <text x="850" y="-22">kali</text>
-      <text x="850" y="-2">011010</text>
-      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 132" dur="5.4s" repeatCount="indefinite"/>
+    <g class="rain bright">
+      <text x="832" y="-48">0xBEEF</text>
+      <text x="832" y="-30">kali</text>
+      <text class="tip" x="832" y="-12">011010</text>
+      <animateTransform attributeName="transform" type="translate"
+        from="0 0" to="0 145" dur="5.2s" repeatCount="indefinite"/>
     </g>
+
   </g>
 </svg>
