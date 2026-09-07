@@ -15,3 +15,7 @@ Uso **Linux e terminal** no dia a dia e atualmente estudo **C++, C#, Rust, SQL, 
 ### `./stack`
 
 <div><code>main</code>&nbsp;&nbsp;<img height="30" src="https://skillicons.dev/icons?i=js,ts,py,go,php,rust&theme=dark" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>sys</code>&nbsp;&nbsp;<img height="30" src="https://skillicons.dev/icons?i=linux,bash&theme=dark" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>learning</code>&nbsp;&nbsp;<img height="30" src="https://skillicons.dev/icons?i=cpp,cs,rust,mysql&theme=dark" />&nbsp;<img height="27" src="https://cdn.simpleicons.org/kalilinux/ff3131" />&nbsp;&nbsp;<code>hacking</code></div>
+
+### `./stats`
+
+<img src="./assets/stats.svg" width="100%" alt="stats" />
