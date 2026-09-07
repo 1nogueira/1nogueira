@@ -35,17 +35,24 @@ jobs:
           def req(url, data=None):
               headers = {
                   "Authorization": f"Bearer {token}",
-                  "User-Agent": "stats-card"
+                  "User-Agent": "profile-stats"
               }
 
               body = None
+
               if data is not None:
                   body = json.dumps(data).encode()
                   headers["Content-Type"] = "application/json"
 
-              r = urllib.request.Request(url, data=body, headers=headers)
-              with urllib.request.urlopen(r) as res:
-                  return json.load(res)
+              request = urllib.request.Request(
+                  url,
+                  data=body,
+                  headers=headers
+              )
+
+              with urllib.request.urlopen(request) as response:
+                  return json.load(response)
+
 
           profile = req(f"https://api.github.com/users/{user}")
 
@@ -71,140 +78,304 @@ jobs:
               "https://api.github.com/graphql",
               {
                   "query": query,
-                  "variables": {"login": user}
+                  "variables": {
+                      "login": user
+                  }
               }
           )
 
-          cal = data["data"]["user"]["contributionsCollection"]["contributionCalendar"]
-          weeks = cal["weeks"]
-          total_contributions = cal["totalContributions"]
-          followers = profile["followers"]
+          calendar = (
+              data["data"]["user"]
+              ["contributionsCollection"]
+              ["contributionCalendar"]
+          )
+
+          total = calendar["totalContributions"]
           repos = profile["public_repos"]
+          followers = profile["followers"]
 
           days = []
-          day_map = {}
+          by_date = {}
 
-          for week in weeks:
-              for d in week["contributionDays"]:
-                  days.append(d)
-                  day_map[d["date"]] = d["contributionCount"]
+          for week in calendar["weeks"]:
+              for day in week["contributionDays"]:
+                  days.append(day)
+                  by_date[day["date"]] = day["contributionCount"]
+
 
           today = date.today()
+          current = today
           streak = 0
-          cur = today
 
           while True:
-              count = day_map.get(cur.isoformat(), 0)
+              count = by_date.get(current.isoformat(), 0)
 
               if count <= 0:
-                  if cur == today:
-                      cur -= timedelta(days=1)
+                  if current == today:
+                      current -= timedelta(days=1)
                       continue
+
                   break
 
               streak += 1
-              cur -= timedelta(days=1)
+              current -= timedelta(days=1)
 
-          last_days = days[-14:]
-          values = [d["contributionCount"] for d in last_days]
-          labels = [d["date"][5:] for d in last_days]
 
-          max_val = max(values) if max(values) > 0 else 1
+          recent = days[-30:]
 
-          width = 760
-          height = 120
-
-          chart_x = 430
-          chart_y = 24
-          chart_w = 290
-          chart_h = 62
-
-          bar_gap = 6
-          bar_w = (chart_w - bar_gap * (len(values) - 1)) / len(values)
-
-          def esc(s):
-              return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-
-          bars = []
-          for i, v in enumerate(values):
-              x = chart_x + i * (bar_w + bar_gap)
-              h = max(6, (v / max_val) * chart_h) if v > 0 else 4
-              y = chart_y + chart_h - h
-              bars.append(
-                  f'<rect x="{x:.1f}" y="{y:.1f}" width="{bar_w:.1f}" height="{h:.1f}" rx="2" fill="#ff3131" opacity="{0.45 + (v / max_val) * 0.5:.2f}" />'
-              )
-
-          metric_positions = [
-              (48, "contributions", total_contributions),
-              (172, "repos", repos),
-              (270, "followers", followers),
-              (378, "streak", streak),
+          values = [
+              day["contributionCount"]
+              for day in recent
           ]
 
-          metric_svg = []
-          for x, label, value in metric_positions:
-              metric_svg.append(f'''
-                <text x="{x}" y="48" class="num">{esc(value)}</text>
-                <text x="{x}" y="68" class="label">{esc(label)}</text>
-                <rect x="{x}" y="78" width="24" height="2" rx="1" fill="#ff3131" />
-              ''')
+          labels = [
+              day["date"][5:]
+              for day in recent
+          ]
 
-          grid = []
-          for gy in range(0, 4):
-              y = chart_y + gy * (chart_h / 3)
-              grid.append(
-                  f'<line x1="{chart_x}" y1="{y:.1f}" x2="{chart_x + chart_w}" y2="{y:.1f}" stroke="#21262d" stroke-width="1" />'
-              )
+          max_value = max(values) if max(values) > 0 else 1
 
-          svg = f'''<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">
+
+          width = 760
+          height = 96
+
+          graph_x = 405
+          graph_y = 29
+          graph_w = 325
+          graph_h = 43
+
+
+          points = []
+
+          for i, value in enumerate(values):
+              x = graph_x + (
+                  i / (len(values) - 1)
+              ) * graph_w
+
+              y = graph_y + graph_h - (
+                  value / max_value
+              ) * graph_h
+
+              points.append((x, y))
+
+
+          line_points = " ".join(
+              f"{x:.1f},{y:.1f}"
+              for x, y in points
+          )
+
+          area_points = (
+              f"{graph_x},{graph_y + graph_h} "
+              + line_points
+              + f" {graph_x + graph_w},{graph_y + graph_h}"
+          )
+
+
+          stats = [
+              (total, "contributions"),
+              (repos, "repos"),
+              (followers, "followers"),
+              (streak, "streak")
+          ]
+
+          stat_x = [
+              28,
+              122,
+              204,
+              302
+          ]
+
+          stat_svg = ""
+
+          for (value, label), x in zip(stats, stat_x):
+              stat_svg += f"""
+                <text
+                  x="{x}"
+                  y="49"
+                  class="number"
+                >{value}</text>
+
+                <text
+                  x="{x}"
+                  y="65"
+                  class="label"
+                >{label}</text>
+
+                <rect
+                  x="{x}"
+                  y="73"
+                  width="20"
+                  height="2"
+                  rx="1"
+                  fill="#ff3131"
+                />
+              """
+
+
+          grid = ""
+
+          for i in range(3):
+              y = graph_y + (graph_h / 2) * i
+
+              grid += f"""
+                <line
+                  x1="{graph_x}"
+                  y1="{y:.1f}"
+                  x2="{graph_x + graph_w}"
+                  y2="{y:.1f}"
+                  stroke="#21262d"
+                  stroke-width="1"
+                />
+              """
+
+
+          svg = f"""
+          <svg
+            width="{width}"
+            height="{height}"
+            viewBox="0 0 {width} {height}"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+
+            <defs>
+              <linearGradient
+                id="activity"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop
+                  offset="0%"
+                  stop-color="#ff3131"
+                  stop-opacity=".28"
+                />
+
+                <stop
+                  offset="100%"
+                  stop-color="#ff3131"
+                  stop-opacity="0"
+                />
+              </linearGradient>
+            </defs>
+
             <style>
-              .title {{
-                font-family: "JetBrains Mono", "Consolas", monospace;
-                font-size: 18px;
-                fill: #ff3131;
-                font-weight: 600;
+              text {{
+                font-family:
+                  "JetBrains Mono",
+                  "Cascadia Code",
+                  "Consolas",
+                  monospace;
               }}
 
-              .num {{
-                font-family: "JetBrains Mono", "Consolas", monospace;
-                font-size: 22px;
+              .heading {{
+                fill: #ff3131;
+                font-size: 12px;
+                font-weight: 700;
+              }}
+
+              .number {{
                 fill: #f0f6fc;
+                font-size: 19px;
                 font-weight: 700;
               }}
 
               .label {{
-                font-family: "JetBrains Mono", "Consolas", monospace;
-                font-size: 11px;
                 fill: #8b949e;
+                font-size: 9px;
               }}
 
               .small {{
-                font-family: "JetBrains Mono", "Consolas", monospace;
-                font-size: 10px;
-                fill: #8b949e;
+                fill: #6e7681;
+                font-size: 8px;
               }}
             </style>
 
-            <rect x="0.5" y="0.5" width="{width-1}" height="{height-1}" rx="10" fill="#0d1117" stroke="#30363d" />
 
-            <text x="24" y="26" class="title">stats</text>
+            <rect
+              x=".5"
+              y=".5"
+              width="{width - 1}"
+              height="{height - 1}"
+              rx="8"
+              fill="#0d1117"
+              stroke="#30363d"
+            />
 
-            {''.join(metric_svg)}
 
-            <line x1="420" y1="20" x2="420" y2="96" stroke="#30363d" stroke-width="1" />
+            <text
+              x="20"
+              y="20"
+              class="heading"
+            >./stats</text>
 
-            <text x="{chart_x}" y="16" class="small">last 14 days</text>
+            {stat_svg}
 
-            {''.join(grid)}
-            {''.join(bars)}
 
-            <text x="{chart_x}" y="104" class="small">{labels[0]}</text>
-            <text x="{chart_x + chart_w - 28}" y="104" class="small">{labels[-1]}</text>
-          </svg>'''
+            <text
+              x="{graph_x}"
+              y="18"
+              class="small"
+            >activity · last 30 days</text>
 
-          os.makedirs("assets", exist_ok=True)
-          with open("assets/stats-graph.svg", "w", encoding="utf-8") as f:
-              f.write(svg)
+
+            {grid}
+
+
+            <polygon
+              points="{area_points}"
+              fill="url(#activity)"
+            />
+
+
+            <polyline
+              points="{line_points}"
+              fill="none"
+              stroke="#ff3131"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+
+            <circle
+              cx="{points[-1][0]}"
+              cy="{points[-1][1]}"
+              r="3"
+              fill="#f0f6fc"
+              stroke="#ff3131"
+              stroke-width="2"
+            />
+
+
+            <text
+              x="{graph_x}"
+              y="86"
+              class="small"
+            >{labels[0]}</text>
+
+            <text
+              x="{graph_x + graph_w - 25}"
+              y="86"
+              class="small"
+            >{labels[-1]}</text>
+
+          </svg>
+          """
+
+
+          os.makedirs(
+              "assets",
+              exist_ok=True
+          )
+
+          with open(
+              "assets/stats-graph.svg",
+              "w",
+              encoding="utf-8"
+          ) as file:
+              file.write(svg)
+
           PY
 
       - name: commit
@@ -215,5 +386,5 @@ jobs:
           git add assets/stats-graph.svg
           git diff --cached --quiet && exit 0
 
-          git commit -m "update stats graph"
+          git commit -m "update stats"
           git push
