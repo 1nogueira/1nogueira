@@ -4,9 +4,6 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 4 * * *"
-  push:
-    branches:
-      - main
 
 permissions:
   contents: write
@@ -16,9 +13,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: generate stats svg
+      - name: Generate stats
         env:
           GH_TOKEN: ${{ github.token }}
           USERNAME: ${{ github.repository_owner }}
@@ -32,29 +30,33 @@ jobs:
           user = os.environ["USERNAME"]
           token = os.environ["GH_TOKEN"]
 
-          def req(url, data=None):
+          def request(url, payload=None):
               headers = {
                   "Authorization": f"Bearer {token}",
-                  "User-Agent": "profile-stats"
+                  "User-Agent": "github-profile-stats",
+                  "Accept": "application/vnd.github+json"
               }
 
-              body = None
+              data = None
 
-              if data is not None:
-                  body = json.dumps(data).encode()
+              if payload is not None:
+                  data = json.dumps(payload).encode("utf-8")
                   headers["Content-Type"] = "application/json"
 
-              request = urllib.request.Request(
+              req = urllib.request.Request(
                   url,
-                  data=body,
+                  data=data,
                   headers=headers
               )
 
-              with urllib.request.urlopen(request) as response:
+              with urllib.request.urlopen(req) as response:
                   return json.load(response)
 
 
-          profile = req(f"https://api.github.com/users/{user}")
+          profile = request(
+              f"https://api.github.com/users/{user}"
+          )
+
 
           query = """
           query($login: String!) {
@@ -74,7 +76,8 @@ jobs:
           }
           """
 
-          data = req(
+
+          result = request(
               "https://api.github.com/graphql",
               {
                   "query": query,
@@ -84,39 +87,45 @@ jobs:
               }
           )
 
+
           calendar = (
-              data["data"]["user"]
+              result["data"]["user"]
               ["contributionsCollection"]
               ["contributionCalendar"]
           )
+
 
           total = calendar["totalContributions"]
           repos = profile["public_repos"]
           followers = profile["followers"]
 
+
           days = []
-          by_date = {}
 
           for week in calendar["weeks"]:
               for day in week["contributionDays"]:
-                  days.append(day)
-                  by_date[day["date"]] = day["contributionCount"]
+                  days.append({
+                      "date": day["date"],
+                      "count": day["contributionCount"]
+                  })
+
+
+          by_date = {
+              d["date"]: d["count"]
+              for d in days
+          }
 
 
           today = date.today()
           current = today
           streak = 0
 
-          while True:
-              count = by_date.get(current.isoformat(), 0)
 
-              if count <= 0:
-                  if current == today:
-                      current -= timedelta(days=1)
-                      continue
+          if by_date.get(current.isoformat(), 0) == 0:
+              current -= timedelta(days=1)
 
-                  break
 
+          while by_date.get(current.isoformat(), 0) > 0:
               streak += 1
               current -= timedelta(days=1)
 
@@ -124,16 +133,25 @@ jobs:
           recent = days[-30:]
 
           values = [
-              day["contributionCount"]
-              for day in recent
+              d["count"]
+              for d in recent
           ]
 
           labels = [
-              day["date"][5:]
-              for day in recent
+              d["date"][5:]
+              for d in recent
           ]
 
-          max_value = max(values) if max(values) > 0 else 1
+
+          if not values:
+              values = [0, 0]
+              labels = ["--", "--"]
+
+
+          max_value = max(values)
+
+          if max_value == 0:
+              max_value = 1
 
 
           width = 760
@@ -142,15 +160,20 @@ jobs:
           graph_x = 405
           graph_y = 29
           graph_w = 325
-          graph_h = 43
+          graph_h = 42
 
 
           points = []
 
+          count = len(values)
+
           for i, value in enumerate(values):
-              x = graph_x + (
-                  i / (len(values) - 1)
-              ) * graph_w
+              if count == 1:
+                  x = graph_x
+              else:
+                  x = graph_x + (
+                      i / (count - 1)
+                  ) * graph_w
 
               y = graph_y + graph_h - (
                   value / max_value
@@ -163,6 +186,7 @@ jobs:
               f"{x:.1f},{y:.1f}"
               for x, y in points
           )
+
 
           area_points = (
               f"{graph_x},{graph_y + graph_h} "
@@ -178,20 +202,23 @@ jobs:
               (streak, "streak")
           ]
 
-          stat_x = [
-              28,
-              122,
-              204,
-              302
+
+          positions = [
+              24,
+              120,
+              205,
+              300
           ]
 
-          stat_svg = ""
 
-          for (value, label), x in zip(stats, stat_x):
-              stat_svg += f"""
+          metric_svg = ""
+
+
+          for (value, label), x in zip(stats, positions):
+              metric_svg += f"""
                 <text
                   x="{x}"
-                  y="49"
+                  y="48"
                   class="number"
                 >{value}</text>
 
@@ -203,7 +230,7 @@ jobs:
 
                 <rect
                   x="{x}"
-                  y="73"
+                  y="74"
                   width="20"
                   height="2"
                   rx="1"
@@ -212,12 +239,15 @@ jobs:
               """
 
 
-          grid = ""
+          grid_svg = ""
+
 
           for i in range(3):
-              y = graph_y + (graph_h / 2) * i
+              y = graph_y + (
+                  graph_h / 2
+              ) * i
 
-              grid += f"""
+              grid_svg += f"""
                 <line
                   x1="{graph_x}"
                   y1="{y:.1f}"
@@ -229,8 +259,14 @@ jobs:
               """
 
 
-          svg = f"""
-          <svg
+          first_label = labels[0]
+          last_label = labels[-1]
+
+          last_x = points[-1][0]
+          last_y = points[-1][1]
+
+
+          svg = f"""<svg
             width="{width}"
             height="{height}"
             viewBox="0 0 {width} {height}"
@@ -238,17 +274,19 @@ jobs:
           >
 
             <defs>
+
               <linearGradient
-                id="activity"
+                id="area"
                 x1="0"
                 y1="0"
                 x2="0"
                 y2="1"
               >
+
                 <stop
                   offset="0%"
                   stop-color="#ff3131"
-                  stop-opacity=".28"
+                  stop-opacity=".24"
                 />
 
                 <stop
@@ -256,10 +294,34 @@ jobs:
                   stop-color="#ff3131"
                   stop-opacity="0"
                 />
+
               </linearGradient>
+
+              <filter
+                id="glow"
+                x="-50%"
+                y="-50%"
+                width="200%"
+                height="200%"
+              >
+
+                <feGaussianBlur
+                  stdDeviation=".7"
+                  result="blur"
+                />
+
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+
+              </filter>
+
             </defs>
 
+
             <style>
+
               text {{
                 font-family:
                   "JetBrains Mono",
@@ -268,7 +330,7 @@ jobs:
                   monospace;
               }}
 
-              .heading {{
+              .title {{
                 fill: #ff3131;
                 font-size: 12px;
                 font-weight: 700;
@@ -289,6 +351,7 @@ jobs:
                 fill: #6e7681;
                 font-size: 8px;
               }}
+
             </style>
 
 
@@ -305,11 +368,12 @@ jobs:
 
             <text
               x="20"
-              y="20"
-              class="heading"
+              y="19"
+              class="title"
             >./stats</text>
 
-            {stat_svg}
+
+            {metric_svg}
 
 
             <text
@@ -319,12 +383,12 @@ jobs:
             >activity · last 30 days</text>
 
 
-            {grid}
+            {grid_svg}
 
 
             <polygon
               points="{area_points}"
-              fill="url(#activity)"
+              fill="url(#area)"
             />
 
 
@@ -335,12 +399,13 @@ jobs:
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
+              filter="url(#glow)"
             />
 
 
             <circle
-              cx="{points[-1][0]}"
-              cy="{points[-1][1]}"
+              cx="{last_x:.1f}"
+              cy="{last_y:.1f}"
               r="3"
               fill="#f0f6fc"
               stroke="#ff3131"
@@ -352,16 +417,16 @@ jobs:
               x="{graph_x}"
               y="86"
               class="small"
-            >{labels[0]}</text>
+            >{first_label}</text>
+
 
             <text
-              x="{graph_x + graph_w - 25}"
+              x="{graph_x + graph_w - 24}"
               y="86"
               class="small"
-            >{labels[-1]}</text>
+            >{last_label}</text>
 
-          </svg>
-          """
+          </svg>"""
 
 
           os.makedirs(
@@ -369,8 +434,9 @@ jobs:
               exist_ok=True
           )
 
+
           with open(
-              "assets/stats-graph.svg",
+              "assets/stats-graph-v2.svg",
               "w",
               encoding="utf-8"
           ) as file:
@@ -378,13 +444,17 @@ jobs:
 
           PY
 
-      - name: commit
+      - name: Commit stats
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add assets/stats-graph.svg
-          git diff --cached --quiet && exit 0
+          git add assets/stats-graph-v2.svg
+
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
 
           git commit -m "update stats"
           git push
