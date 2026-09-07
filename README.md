@@ -17,5 +17,4 @@ Uso Linux e o terminal em alguns projetos e atualmente estudo **C++, C#, Rust, S
 
 ### `./stats`
 
-<img src="./assets/stats-graph.svg" width="100%" alt="stats" />
-
+<img src="./assets/stats-graph-v2.svg?v=2" width="100%" alt="stats" />
