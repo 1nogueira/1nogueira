@@ -1,0 +1,61 @@
+<svg width="760" height="120" viewBox="0 0 760 120" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .title {
+      font-family: "JetBrains Mono", "Consolas", monospace;
+      font-size: 18px;
+      fill: #ff3131;
+      font-weight: 600;
+    }
+
+    .num {
+      font-family: "JetBrains Mono", "Consolas", monospace;
+      font-size: 22px;
+      fill: #f0f6fc;
+      font-weight: 700;
+    }
+
+    .label {
+      font-family: "JetBrains Mono", "Consolas", monospace;
+      font-size: 11px;
+      fill: #8b949e;
+    }
+
+    .small {
+      font-family: "JetBrains Mono", "Consolas", monospace;
+      font-size: 10px;
+      fill: #8b949e;
+    }
+  </style>
+
+  <rect x="0.5" y="0.5" width="759" height="119" rx="10" fill="#0d1117" stroke="#30363d" />
+
+  <text x="24" y="26" class="title">stats</text>
+
+  
+      <text x="48" y="48" class="num">39</text>
+      <text x="48" y="68" class="label">contributions</text>
+      <rect x="48" y="78" width="24" height="2" rx="1" fill="#ff3131" />
+    
+      <text x="172" y="48" class="num">1</text>
+      <text x="172" y="68" class="label">repos</text>
+      <rect x="172" y="78" width="24" height="2" rx="1" fill="#ff3131" />
+    
+      <text x="270" y="48" class="num">8</text>
+      <text x="270" y="68" class="label">followers</text>
+      <rect x="270" y="78" width="24" height="2" rx="1" fill="#ff3131" />
+    
+      <text x="378" y="48" class="num">1</text>
+      <text x="378" y="68" class="label">streak</text>
+      <rect x="378" y="78" width="24" height="2" rx="1" fill="#ff3131" />
+    
+
+  <line x1="420" y1="20" x2="420" y2="96" stroke="#30363d" stroke-width="1" />
+
+  <text x="430" y="16" class="small">last 14 days</text>
+
+  <line x1="430" y1="24.0" x2="720" y2="24.0" stroke="#21262d" stroke-width="1" /><line x1="430" y1="44.7" x2="720" y2="44.7" stroke="#21262d" stroke-width="1" /><line x1="430" y1="65.3" x2="720" y2="65.3" stroke="#21262d" stroke-width="1" /><line x1="430" y1="86.0" x2="720" y2="86.0" stroke="#21262d" stroke-width="1" />
+  <rect x="430.0" y="82.0" width="15.1" height="4.0" rx="2" fill="#ff3131" opacity="0.45" /><rect x="451.1" y="82.0" width="15.1" height="4.0" rx="2" fill="#ff3131" opacity="0.45" /><rect x="472.3" y="82.0" width="15.1" height="4.0" rx="2" fill="#ff3131" opacity="0.45" /><rect x="493.4" y="82.0" width="15.1" height="4.0" rx="2" fill="#ff3131" opacity="0.45" /><rect x="514.6" y="82.0" width="15.1" height="4.0" rx="2" fill="#ff3131" opacity="0.45" /><rect x="535.7" y="82.0" width="15.1" height="4.0" rx="2" fill="#ff3131" opacity="0.45" /><rect x="556.9" y="82.0" width="15.1" height="4.0" rx="2" fill="#ff3131" opacity="0.45" /><rect x="578.0" y="82.0" width="15.1" height="4.0" rx="2" fill="#ff3131" opacity="0.45" /><rect x="599.1" y="82.0" width="15.1" height="4.0" rx="2" fill="#ff3131" opacity="0.45" /><rect x="620.3" y="82.0" width="15.1" height="4.0" rx="2" fill="#ff3131" opacity="0.45" /><rect x="641.4" y="82.0" width="15.1" height="4.0" rx="2" fill="#ff3131" opacity="0.45" /><rect x="662.6" y="82.0" width="15.1" height="4.0" rx="2" fill="#ff3131" opacity="0.45" /><rect x="683.7" y="82.0" width="15.1" height="4.0" rx="2" fill="#ff3131" opacity="0.45" /><rect x="704.9" y="24.0" width="15.1" height="62.0" rx="2" fill="#ff3131" opacity="0.95" />
+
+  <text x="430" y="104" class="small">08-25</text>
+  <text x="692" y="104" class="small">09-07</text>
+</svg>
