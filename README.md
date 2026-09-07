@@ -19,4 +19,3 @@ Uso Linux e o terminal em alguns projetos e atualmente estudo **C++, C#, Rust, S
 
 <img src="./assets/stats-graph.svg" width="100%" alt="stats" />
 
-// so pra upar a commit
