@@ -44,7 +44,7 @@
 
 <img
   width="620"
-  src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=1nogueira&theme=transparent&name=1nogueira"
+  src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=1nogueira&theme=transparent&title_color=ff3131&text_color=f0f6fc&icon_color=ff3131&border_color=ff3131&bg_color=00000000&chart_color=ff3131"
 />
 
 </div>
