@@ -21,91 +21,71 @@ jobs:
           import base64
           import urllib.request
 
-          W = 760
-          H = 96
+          WIDTH = 760
+          HEIGHT = 94
 
-          bg = "#0d1117"
-          border = "#30363d"
-          red = "#ff3131"
-          text = "#f0f6fc"
-          pill = "#21262d"
+          BG = "#0d1117"
+          BORDER = "#30363d"
+          RED = "#ff3131"
+          TEXT = "#f0f6fc"
+          PILL = "#21262d"
 
-          urls = {
-              "js": "https://skillicons.dev/icons?i=js&theme=dark",
-              "ts": "https://skillicons.dev/icons?i=ts&theme=dark",
-              "py": "https://skillicons.dev/icons?i=py&theme=dark",
-              "go": "https://skillicons.dev/icons?i=go&theme=dark",
-              "php": "https://skillicons.dev/icons?i=php&theme=dark",
-              "rust": "https://skillicons.dev/icons?i=rust&theme=dark",
-
-              "linux": "https://skillicons.dev/icons?i=linux&theme=dark",
-              "bash": "https://skillicons.dev/icons?i=bash&theme=dark",
-
-              "cpp": "https://skillicons.dev/icons?i=cpp&theme=dark",
-              "cs": "https://skillicons.dev/icons?i=cs&theme=dark",
-              "mysql": "https://skillicons.dev/icons?i=mysql&theme=dark",
-
-              "kali": "https://cdn.simpleicons.org/kalilinux/FF3131"
-          }
-
-          def fetch(url):
+          def download(url):
               req = urllib.request.Request(
                   url,
                   headers={
-                      "User-Agent": "1nogueira-profile",
-                      "Accept": "image/svg+xml,image/*,*/*"
+                      "User-Agent": "Mozilla/5.0",
+                      "Accept": "image/svg+xml,*/*"
                   }
               )
 
               with urllib.request.urlopen(req, timeout=30) as response:
                   return response.read()
 
-          def encode_icon(url):
-              raw = fetch(url)
+          def svg_data(url):
+              raw = download(url)
               encoded = base64.b64encode(raw).decode("ascii")
               return f"data:image/svg+xml;base64,{encoded}"
 
-          icons = {}
+          main_icons = svg_data(
+              "https://skillicons.dev/icons?i=js,ts,py,go,php,rust&theme=dark"
+          )
 
-          for name, url in urls.items():
-              print("loading", name)
-              icons[name] = encode_icon(url)
+          sys_icons = svg_data(
+              "https://skillicons.dev/icons?i=linux,bash&theme=dark"
+          )
 
-          def icon(name, x, y, size=32):
-              return f'''
-              <image
-                href="{icons[name]}"
-                x="{x}"
-                y="{y}"
-                width="{size}"
-                height="{size}"
-                preserveAspectRatio="xMidYMid meet"
-              />
-              '''
+          learning_icons = svg_data(
+              "https://skillicons.dev/icons?i=cpp,cs,rust,mysql&theme=dark"
+          )
 
-          def label(name, x, y, width):
-              return f'''
+          kali_icon = svg_data(
+              "https://cdn.simpleicons.org/kalilinux/FF3131"
+          )
+
+          def pill(text, x, y, width):
+              return f"""
               <rect
                 x="{x}"
                 y="{y}"
                 width="{width}"
                 height="21"
                 rx="5"
-                fill="{pill}"
+                fill="{PILL}"
               />
 
               <text
                 x="{x + width / 2}"
-                y="{y + 14.5}"
+                y="{y + 14}"
                 text-anchor="middle"
-                class="label"
-              >{name}</text>
-              '''
+                class="pill"
+              >{text}</text>
+              """
 
-          svg = f'''<svg
-            width="{W}"
-            height="{H}"
-            viewBox="0 0 {W} {H}"
+          svg = f"""<svg
+            width="{WIDTH}"
+            height="{HEIGHT}"
+            viewBox="0 0 {WIDTH} {HEIGHT}"
             xmlns="http://www.w3.org/2000/svg"
           >
 
@@ -119,13 +99,13 @@ jobs:
               }}
 
               .title {{
-                fill: {red};
+                fill: {RED};
                 font-size: 13px;
                 font-weight: 700;
               }}
 
-              .label {{
-                fill: {text};
+              .pill {{
+                fill: {TEXT};
                 font-size: 9px;
                 font-weight: 600;
               }}
@@ -134,11 +114,11 @@ jobs:
             <rect
               x=".5"
               y=".5"
-              width="{W - 1}"
-              height="{H - 1}"
+              width="{WIDTH - 1}"
+              height="{HEIGHT - 1}"
               rx="10"
-              fill="{bg}"
-              stroke="{border}"
+              fill="{BG}"
+              stroke="{BORDER}"
             />
 
             <text
@@ -147,34 +127,49 @@ jobs:
               class="title"
             >./stack</text>
 
+            {pill("main", 18, 48, 40)}
 
-            {label("main", 18, 49, 40)}
+            <image
+              href="{main_icons}"
+              x="68"
+              y="40"
+              width="210"
+              height="38"
+              preserveAspectRatio="xMidYMid meet"
+            />
 
-            {icon("js",   68, 43)}
-            {icon("ts",  103, 43)}
-            {icon("py",  138, 43)}
-            {icon("go",  173, 43)}
-            {icon("php", 208, 43)}
-            {icon("rust",243, 43)}
+            {pill("sys", 302, 48, 34)}
 
+            <image
+              href="{sys_icons}"
+              x="346"
+              y="40"
+              width="70"
+              height="38"
+              preserveAspectRatio="xMidYMid meet"
+            />
 
-            {label("sys", 301, 49, 34)}
+            {pill("learning", 444, 48, 66)}
 
-            {icon("linux", 345, 43)}
-            {icon("bash",  380, 43)}
+            <image
+              href="{learning_icons}"
+              x="520"
+              y="40"
+              width="140"
+              height="38"
+              preserveAspectRatio="xMidYMid meet"
+            />
 
+            <image
+              href="{kali_icon}"
+              x="668"
+              y="44"
+              width="30"
+              height="30"
+              preserveAspectRatio="xMidYMid meet"
+            />
 
-            {label("learning", 437, 49, 66)}
-
-            {icon("cpp",   513, 43)}
-            {icon("cs",    548, 43)}
-            {icon("rust",  583, 43)}
-            {icon("mysql", 618, 43)}
-            {icon("kali",  653, 44, 30)}
-
-
-            {label("hacking", 695, 49, 54)}
-
+            {pill("hacking", 705, 48, 46)}
 
             <rect
               x="18"
@@ -182,39 +177,39 @@ jobs:
               width="40"
               height="2"
               rx="1"
-              fill="{red}"
+              fill="{RED}"
             />
 
             <rect
-              x="301"
+              x="302"
               y="82"
               width="34"
               height="2"
               rx="1"
-              fill="{red}"
+              fill="{RED}"
             />
 
             <rect
-              x="437"
+              x="444"
               y="82"
               width="66"
               height="2"
               rx="1"
-              fill="{red}"
+              fill="{RED}"
             />
 
-          </svg>'''
+          </svg>"""
 
           os.makedirs("assets", exist_ok=True)
 
           with open(
-              "assets/stack-card.svg",
+              "assets/stack-card-v3.svg",
               "w",
               encoding="utf-8"
           ) as file:
               file.write(svg)
 
-          print("stack card generated")
+          print("generated assets/stack-card-v3.svg")
 
           PY
 
@@ -223,7 +218,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add assets/stack-card.svg
+          git add assets/stack-card-v3.svg
 
           if git diff --cached --quiet; then
             echo "no changes"
