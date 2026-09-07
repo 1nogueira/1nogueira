@@ -22,7 +22,7 @@
 
     .number {
       fill: #f0f6fc;
-      font-size: 19px;
+      font-size: 17px;
       font-weight: 700;
     }
 
@@ -54,7 +54,7 @@
   >./languages</text>
 
   <text
-    x="655"
+    x="656"
     y="19"
     class="small"
   >top languages</text>
@@ -62,104 +62,29 @@
   
       <text
         x="24"
-        y="50"
+        y="48"
         class="number"
-      >JS</text>
+      >100.0%</text>
 
       <text
         x="24"
-        y="66"
+        y="65"
         class="label"
-      >JavaScript</text>
+      >No data</text>
 
       <rect
         x="24"
-        y="75"
-        width="24"
+        y="74"
+        width="100"
         height="2"
         rx="1"
-        fill="#ff3131"
+        fill="#21262d"
       />
-    
-      <text
-        x="168"
-        y="50"
-        class="number"
-      >TS</text>
-
-      <text
-        x="168"
-        y="66"
-        class="label"
-      >TypeScript</text>
 
       <rect
-        x="168"
-        y="75"
-        width="24"
-        height="2"
-        rx="1"
-        fill="#ff3131"
-      />
-    
-      <text
-        x="312"
-        y="50"
-        class="number"
-      >PY</text>
-
-      <text
-        x="312"
-        y="66"
-        class="label"
-      >Python</text>
-
-      <rect
-        x="312"
-        y="75"
-        width="24"
-        height="2"
-        rx="1"
-        fill="#ff3131"
-      />
-    
-      <text
-        x="456"
-        y="50"
-        class="number"
-      >GO</text>
-
-      <text
-        x="456"
-        y="66"
-        class="label"
-      >Go</text>
-
-      <rect
-        x="456"
-        y="75"
-        width="24"
-        height="2"
-        rx="1"
-        fill="#ff3131"
-      />
-    
-      <text
-        x="600"
-        y="50"
-        class="number"
-      >PHP</text>
-
-      <text
-        x="600"
-        y="66"
-        class="label"
-      >PHP</text>
-
-      <rect
-        x="600"
-        y="75"
-        width="24"
+        x="24"
+        y="74"
+        width="100.0"
         height="2"
         rx="1"
         fill="#ff3131"
