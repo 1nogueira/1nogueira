@@ -1,0 +1,48 @@
+<svg width="760" height="86" viewBox="0 0 760 86" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="0.8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <style>
+    .over {
+      font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+      font-size: 11px;
+      fill: #8b949e;
+      letter-spacing: 1px;
+    }
+
+    .name {
+      font-family: "Inter", "Segoe UI", Arial, sans-serif;
+      font-size: 34px;
+      font-weight: 800;
+      fill: #f0f6fc;
+    }
+
+    .accent {
+      fill: #ff3131;
+      font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .line {
+      stroke: #30363d;
+      stroke-width: 1;
+    }
+  </style>
+
+  <line x1="70" y1="18" x2="690" y2="18" class="line"/>
+  <text x="380" y="15" text-anchor="middle" class="over">developer profile</text>
+
+  <text x="380" y="50" text-anchor="middle" class="name">Nogueira</text>
+  <text x="380" y="69" text-anchor="middle" class="accent" filter="url(#softGlow)">full-stack developer · OH Team</text>
+
+  <rect x="322" y="77" width="116" height="2" rx="1" fill="#ff3131"/>
+</svg>
