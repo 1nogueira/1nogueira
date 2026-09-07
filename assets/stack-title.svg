@@ -1,1 +1,12 @@
+<svg width="110" height="28" viewBox="0 0 110 28" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text {
+      font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+      font-size: 16px;
+      font-weight: 700;
+      fill: #ff3131;
+    }
+  </style>
 
+  <text x="0" y="19">./stack</text>
+</svg>
