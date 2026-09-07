@@ -4,21 +4,23 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 4 * * *"
-  push:
-    branches:
-      - main
 
 permissions:
   contents: write
+
+concurrency:
+  group: profile-stats
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: generate stats svg
+      - name: Generate stats
         env:
           GH_TOKEN: ${{ github.token }}
           USERNAME: ${{ github.repository_owner }}
@@ -32,24 +34,31 @@ jobs:
           user = os.environ["USERNAME"]
           token = os.environ["GH_TOKEN"]
 
-          def req(url, data=None):
+          def request(url, payload=None):
               headers = {
                   "Authorization": f"Bearer {token}",
-                  "User-Agent": "stats-card",
+                  "User-Agent": "github-profile-stats",
                   "Accept": "application/vnd.github+json"
               }
 
-              body = None
-              if data is not None:
-                  body = json.dumps(data).encode()
+              data = None
+
+              if payload is not None:
+                  data = json.dumps(payload).encode("utf-8")
                   headers["Content-Type"] = "application/json"
 
-              request = urllib.request.Request(url, data=body, headers=headers)
+              req = urllib.request.Request(
+                  url,
+                  data=data,
+                  headers=headers
+              )
 
-              with urllib.request.urlopen(request) as response:
+              with urllib.request.urlopen(req) as response:
                   return json.load(response)
 
-          profile = req(f"https://api.github.com/users/{user}")
+          profile = request(
+              f"https://api.github.com/users/{user}"
+          )
 
           query = """
           query($login: String!) {
@@ -69,198 +78,397 @@ jobs:
           }
           """
 
-          data = req(
+          result = request(
               "https://api.github.com/graphql",
               {
                   "query": query,
-                  "variables": {"login": user}
+                  "variables": {
+                      "login": user
+                  }
               }
           )
 
-          cal = data["data"]["user"]["contributionsCollection"]["contributionCalendar"]
-          weeks = cal["weeks"]
-          total_contributions = cal["totalContributions"]
+          calendar = (
+              result["data"]["user"]
+              ["contributionsCollection"]
+              ["contributionCalendar"]
+          )
 
-          followers = profile["followers"]
+          total = calendar["totalContributions"]
           repos = profile["public_repos"]
+          followers = profile["followers"]
 
           days = []
-          day_map = {}
 
-          for week in weeks:
-              for d in week["contributionDays"]:
-                  days.append(d)
-                  day_map[d["date"]] = d["contributionCount"]
+          for week in calendar["weeks"]:
+              for day in week["contributionDays"]:
+                  days.append({
+                      "date": day["date"],
+                      "count": day["contributionCount"]
+                  })
+
+          by_date = {
+              item["date"]: item["count"]
+              for item in days
+          }
 
           today = date.today()
+          current = today
           streak = 0
-          cur = today
 
-          while True:
-              count = day_map.get(cur.isoformat(), 0)
+          if by_date.get(current.isoformat(), 0) == 0:
+              current -= timedelta(days=1)
 
-              if count <= 0:
-                  if cur == today:
-                      cur -= timedelta(days=1)
-                      continue
-                  break
-
+          while by_date.get(current.isoformat(), 0) > 0:
               streak += 1
-              cur -= timedelta(days=1)
+              current -= timedelta(days=1)
 
-          def month_shift(year, month, offset):
-              total = year * 12 + (month - 1) + offset
-              new_year = total // 12
-              new_month = total % 12 + 1
+          def shift_month(year, month, offset):
+              value = year * 12 + (month - 1) + offset
+              new_year = value // 12
+              new_month = value % 12 + 1
               return new_year, new_month
 
           month_names = [
-              "jan", "feb", "mar", "apr", "may", "jun",
-              "jul", "aug", "sep", "oct", "nov", "dec"
+              "jan",
+              "feb",
+              "mar",
+              "apr",
+              "may",
+              "jun",
+              "jul",
+              "aug",
+              "sep",
+              "oct",
+              "nov",
+              "dec"
           ]
 
           months = []
-          for i in range(-11, 1):
-              y, m = month_shift(today.year, today.month, i)
-              months.append((y, m))
 
-          monthly_totals = {f"{y:04d}-{m:02d}": 0 for y, m in months}
+          for offset in range(-11, 1):
+              year, month = shift_month(
+                  today.year,
+                  today.month,
+                  offset
+              )
 
-          for d in days:
-              key = d["date"][:7]
-              if key in monthly_totals:
-                  monthly_totals[key] += d["contributionCount"]
+              months.append(
+                  (year, month)
+              )
 
-          values = [monthly_totals[f"{y:04d}-{m:02d}"] for y, m in months]
-          labels = [month_names[m - 1] for _, m in months]
+          monthly = {
+              f"{year:04d}-{month:02d}": 0
+              for year, month in months
+          }
 
-          max_val = max(values) if max(values) > 0 else 1
+          for item in days:
+              key = item["date"][:7]
 
-          width = 760
-          height = 120
+              if key in monthly:
+                  monthly[key] += item["count"]
 
-          chart_x = 420
-          chart_y = 22
-          chart_w = 310
-          chart_h = 68
-
-          def esc(s):
-              return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-
-          metric_positions = [
-              (26, "contributions", total_contributions),
-              (130, "repos", repos),
-              (224, "followers", followers),
-              (316, "streak", streak),
+          values = [
+              monthly[f"{year:04d}-{month:02d}"]
+              for year, month in months
           ]
 
-          metric_svg = []
-          for x, label, value in metric_positions:
-              metric_svg.append(f'''
-                <text x="{x}" y="48" class="num">{esc(value)}</text>
-                <text x="{x}" y="68" class="label">{esc(label)}</text>
-                <rect x="{x}" y="79" width="24" height="2" rx="1" fill="#ff3131" />
-              ''')
+          labels = [
+              month_names[month - 1]
+              for _, month in months
+          ]
 
-          grid = []
-          for gy in range(4):
-              y = chart_y + gy * (chart_h / 3)
-              grid.append(
-                  f'<line x1="{chart_x}" y1="{y:.1f}" x2="{chart_x + chart_w}" y2="{y:.1f}" stroke="#21262d" stroke-width="1" />'
-              )
+          max_value = max(values)
 
-          point_step = chart_w / (len(values) - 1) if len(values) > 1 else chart_w
+          if max_value == 0:
+              max_value = 1
+
+          width = 760
+          height = 112
+
+          graph_x = 405
+          graph_y = 27
+          graph_w = 325
+          graph_h = 50
+
           points = []
 
-          for i, value in enumerate(values):
-              x = chart_x + i * point_step
-              y = chart_y + chart_h - ((value / max_val) * chart_h)
-              points.append((x, y, value))
+          for index, value in enumerate(values):
+              if len(values) == 1:
+                  x = graph_x
+              else:
+                  x = graph_x + (
+                      index / (len(values) - 1)
+                  ) * graph_w
 
-          line_path = "M " + " L ".join(f"{x:.1f} {y:.1f}" for x, y, _ in points)
-          area_path = (
-              line_path
-              + f" L {points[-1][0]:.1f} {chart_y + chart_h:.1f}"
-              + f" L {points[0][0]:.1f} {chart_y + chart_h:.1f} Z"
+              y = graph_y + graph_h - (
+                  value / max_value
+              ) * graph_h
+
+              points.append(
+                  (x, y)
+              )
+
+          line_points = " ".join(
+              f"{x:.1f},{y:.1f}"
+              for x, y in points
           )
 
-          points_svg = []
-          for i, (x, y, value) in enumerate(points):
-              radius = 3.2 if i == len(points) - 1 else 2.2
-              fill = "#f0f6fc" if i == len(points) - 1 else "#ff3131"
-              stroke = "#ff3131"
-              stroke_width = "2" if i == len(points) - 1 else "0"
-              points_svg.append(
-                  f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{radius}" fill="{fill}" stroke="{stroke}" stroke-width="{stroke_width}" />'
-              )
+          area_points = (
+              f"{graph_x},{graph_y + graph_h} "
+              + line_points
+              + f" {graph_x + graph_w},{graph_y + graph_h}"
+          )
 
-          labels_svg = []
-          for i, label in enumerate(labels):
-              x = chart_x + i * point_step
-              labels_svg.append(
-                  f'<text x="{x:.1f}" y="108" text-anchor="middle" class="small">{label}</text>'
-              )
+          stats = [
+              (total, "contributions"),
+              (repos, "repos"),
+              (followers, "followers"),
+              (streak, "streak")
+          ]
 
-          svg = f'''<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">
+          positions = [
+              24,
+              120,
+              205,
+              300
+          ]
+
+          metric_svg = ""
+
+          for (value, label), x in zip(
+              stats,
+              positions
+          ):
+              metric_svg += f"""
+                <text
+                  x="{x}"
+                  y="52"
+                  class="number"
+                >{value}</text>
+
+                <text
+                  x="{x}"
+                  y="69"
+                  class="label"
+                >{label}</text>
+
+                <rect
+                  x="{x}"
+                  y="79"
+                  width="20"
+                  height="2"
+                  rx="1"
+                  fill="#ff3131"
+                />
+              """
+
+          grid_svg = ""
+
+          for index in range(3):
+              y = graph_y + (
+                  graph_h / 2
+              ) * index
+
+              grid_svg += f"""
+                <line
+                  x1="{graph_x}"
+                  y1="{y:.1f}"
+                  x2="{graph_x + graph_w}"
+                  y2="{y:.1f}"
+                  stroke="#21262d"
+                  stroke-width="1"
+                />
+              """
+
+          labels_svg = ""
+
+          for index, label in enumerate(labels):
+              x = graph_x + (
+                  index / (len(labels) - 1)
+              ) * graph_w
+
+              labels_svg += f"""
+                <text
+                  x="{x:.1f}"
+                  y="99"
+                  text-anchor="middle"
+                  class="month"
+                >{label}</text>
+              """
+
+          last_x = points[-1][0]
+          last_y = points[-1][1]
+
+          svg = f"""<svg
+            width="{width}"
+            height="{height}"
+            viewBox="0 0 {width} {height}"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+
+            <defs>
+              <linearGradient
+                id="area"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop
+                  offset="0%"
+                  stop-color="#ff3131"
+                  stop-opacity=".22"
+                />
+
+                <stop
+                  offset="100%"
+                  stop-color="#ff3131"
+                  stop-opacity="0"
+                />
+              </linearGradient>
+
+              <filter
+                id="glow"
+                x="-50%"
+                y="-50%"
+                width="200%"
+                height="200%"
+              >
+                <feGaussianBlur
+                  stdDeviation=".7"
+                  result="blur"
+                />
+
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+
             <style>
-              .title {{
-                font-family: "JetBrains Mono", "Consolas", monospace;
-                font-size: 18px;
-                fill: #ff3131;
-                font-weight: 600;
+              text {{
+                font-family:
+                  "JetBrains Mono",
+                  "Cascadia Code",
+                  "Consolas",
+                  monospace;
               }}
 
-              .num {{
-                font-family: "JetBrains Mono", "Consolas", monospace;
-                font-size: 22px;
+              .title {{
+                fill: #ff3131;
+                font-size: 12px;
+                font-weight: 700;
+              }}
+
+              .number {{
                 fill: #f0f6fc;
+                font-size: 19px;
                 font-weight: 700;
               }}
 
               .label {{
-                font-family: "JetBrains Mono", "Consolas", monospace;
-                font-size: 11px;
                 fill: #8b949e;
+                font-size: 9px;
               }}
 
               .small {{
-                font-family: "JetBrains Mono", "Consolas", monospace;
-                font-size: 9px;
-                fill: #8b949e;
+                fill: #6e7681;
+                font-size: 8px;
+              }}
+
+              .month {{
+                fill: #6e7681;
+                font-size: 7px;
               }}
             </style>
 
-            <rect x="0.5" y="0.5" width="{width-1}" height="{height-1}" rx="10" fill="#0d1117" stroke="#30363d" />
+            <rect
+              x=".5"
+              y=".5"
+              width="{width - 1}"
+              height="{height - 1}"
+              rx="8"
+              fill="#0d1117"
+              stroke="#30363d"
+            />
 
-            <text x="24" y="26" class="title">./stats</text>
+            <text
+              x="20"
+              y="19"
+              class="title"
+            >./stats</text>
 
-            {''.join(metric_svg)}
+            {metric_svg}
 
-            <line x1="400" y1="20" x2="400" y2="96" stroke="#30363d" stroke-width="1" />
+            <text
+              x="{graph_x}"
+              y="17"
+              class="small"
+            >activity · last 12 months</text>
 
-            <text x="{chart_x}" y="16" class="small">activity · last 12 months</text>
+            {grid_svg}
 
-            {''.join(grid)}
+            <polygon
+              points="{area_points}"
+              fill="url(#area)"
+            />
 
-            <path d="{area_path}" fill="#ff3131" opacity="0.10" />
-            <path d="{line_path}" fill="none" stroke="#ff3131" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+            <polyline
+              points="{line_points}"
+              fill="none"
+              stroke="#ff3131"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              filter="url(#glow)"
+            />
 
-            {''.join(points_svg)}
-            {''.join(labels_svg)}
-          </svg>'''
+            <circle
+              cx="{last_x:.1f}"
+              cy="{last_y:.1f}"
+              r="3"
+              fill="#f0f6fc"
+              stroke="#ff3131"
+              stroke-width="2"
+            />
 
-          os.makedirs("assets", exist_ok=True)
-          with open("assets/stats-graph-v2.svg", "w", encoding="utf-8") as f:
-              f.write(svg)
+            {labels_svg}
+
+          </svg>"""
+
+          os.makedirs(
+              "assets",
+              exist_ok=True
+          )
+
+          with open(
+              "assets/stats-graph-v2.svg",
+              "w",
+              encoding="utf-8"
+          ) as file:
+              file.write(svg)
+
+          print("Generated 12 month stats graph")
+
           PY
 
-      - name: commit
+      - name: Commit stats
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add assets/stats-graph-v2.svg
-          git diff --cached --quiet && exit 0
+
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
 
           git commit -m "update stats graph"
-          git push
+
+          git fetch origin main
+          git rebase origin/main
+
+          git push origin HEAD:main
