@@ -11,16 +11,6 @@ Uso Linux e o terminal em alguns projetos e atualmente estudo **C++, C#, Rust, S
 
 <img src="./assets/red-rain.svg" width="100%" alt="code rain" />
 
-<table width="100%">
-<tr>
-<td>
-
-<img src="./assets/stack-title.svg" height="24" alt="./stack" />
-
-<div><code>main</code>&nbsp;&nbsp;<img height="30" src="https://skillicons.dev/icons?i=js,ts,py,go,php,rust&theme=dark" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>sys</code>&nbsp;&nbsp;<img height="30" src="https://skillicons.dev/icons?i=linux,bash&theme=dark" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>learning</code>&nbsp;&nbsp;<img height="30" src="https://skillicons.dev/icons?i=cpp,cs,rust,mysql&theme=dark" />&nbsp;<img height="27" src="https://cdn.simpleicons.org/kalilinux/ff3131" />&nbsp;&nbsp;<code>hacking</code></div>
-
-</td>
-</tr>
-</table>
+<img src="./assets/stack-card.svg?v=1" width="100%" alt="stack" />
 
 <img src="./assets/stats-graph-v2.svg?v=2" width="100%" alt="stats" />
