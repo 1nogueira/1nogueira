@@ -1,4 +1,6 @@
-# Nogueira
+<p align="center">
+  <img src="./assets/name-title.svg" width="100%" alt="Nogueira" />
+</p>
 
 `Full-Stack Developer`
 
