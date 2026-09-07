@@ -1,0 +1,234 @@
+name: stats
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 4 * * *"
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: generate stats
+        env:
+          GH_TOKEN: ${{ github.token }}
+          USERNAME: ${{ github.repository_owner }}
+        run: |
+          python <<'PY'
+          import os
+          import json
+          import urllib.request
+          from datetime import date, timedelta
+
+          username = os.environ["USERNAME"]
+          token = os.environ["GH_TOKEN"]
+
+          def request(url, data=None):
+              headers = {
+                  "Authorization": f"Bearer {token}",
+                  "User-Agent": "github-profile"
+              }
+
+              if data is not None:
+                  data = json.dumps(data).encode()
+                  headers["Content-Type"] = "application/json"
+
+              req = urllib.request.Request(
+                  url,
+                  data=data,
+                  headers=headers
+              )
+
+              with urllib.request.urlopen(req) as res:
+                  return json.load(res)
+
+          profile = request(
+              f"https://api.github.com/users/{username}"
+          )
+
+          query = """
+          query($login: String!) {
+            user(login: $login) {
+              contributionsCollection {
+                contributionCalendar {
+                  totalContributions
+                  weeks {
+                    contributionDays {
+                      date
+                      contributionCount
+                    }
+                  }
+                }
+              }
+            }
+          }
+          """
+
+          result = request(
+              "https://api.github.com/graphql",
+              {
+                  "query": query,
+                  "variables": {
+                      "login": username
+                  }
+              }
+          )
+
+          calendar = (
+              result["data"]["user"]
+              ["contributionsCollection"]
+              ["contributionCalendar"]
+          )
+
+          contributions = calendar["totalContributions"]
+          repos = profile["public_repos"]
+          followers = profile["followers"]
+
+          days = {}
+
+          for week in calendar["weeks"]:
+              for day in week["contributionDays"]:
+                  days[day["date"]] = day["contributionCount"]
+
+          today = date.today()
+
+          streak = 0
+          current = today
+
+          while True:
+              value = days.get(current.isoformat(), 0)
+
+              if value <= 0:
+                  if current == today:
+                      current -= timedelta(days=1)
+                      continue
+                  break
+
+              streak += 1
+              current -= timedelta(days=1)
+
+          metrics = [
+              (str(contributions), "contributions"),
+              (str(repos), "repos"),
+              (str(followers), "followers"),
+              (str(streak), "streak"),
+          ]
+
+          width = 720
+          height = 88
+          section = width / len(metrics)
+
+          svg = f'''<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">
+
+            <style>
+              .num {{
+                font-family: "JetBrains Mono", "Consolas", monospace;
+                font-size: 22px;
+                font-weight: 600;
+                fill: #f0f6fc;
+              }}
+
+              .label {{
+                font-family: "JetBrains Mono", "Consolas", monospace;
+                font-size: 11px;
+                fill: #8b949e;
+              }}
+
+              .accent {{
+                fill: #ff3131;
+              }}
+
+              .line {{
+                stroke: #30363d;
+                stroke-width: 1;
+              }}
+            </style>
+
+            <rect
+              x="0.5"
+              y="0.5"
+              width="{width - 1}"
+              height="{height - 1}"
+              rx="7"
+              fill="#0d1117"
+              stroke="#30363d"
+            />
+          '''
+
+          for i, (number, label) in enumerate(metrics):
+              center = section * i + section / 2
+
+              if i:
+                  x = section * i
+
+                  svg += f'''
+                    <line
+                      class="line"
+                      x1="{x}"
+                      y1="18"
+                      x2="{x}"
+                      y2="70"
+                    />
+                  '''
+
+              svg += f'''
+                <text
+                  class="num"
+                  x="{center}"
+                  y="40"
+                  text-anchor="middle"
+                >
+                  {number}
+                </text>
+
+                <text
+                  class="label"
+                  x="{center}"
+                  y="61"
+                  text-anchor="middle"
+                >
+                  {label}
+                </text>
+
+                <rect
+                  class="accent"
+                  x="{center - 12}"
+                  y="73"
+                  width="24"
+                  height="2"
+                  rx="1"
+                />
+              '''
+
+          svg += "</svg>"
+
+          os.makedirs("assets", exist_ok=True)
+
+          with open(
+              "assets/stats.svg",
+              "w",
+              encoding="utf-8"
+          ) as file:
+              file.write(svg)
+
+          PY
+
+      - name: commit stats
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add assets/stats.svg
+          git diff --cached --quiet && exit 0
+
+          git commit -m "update stats"
+          git push
