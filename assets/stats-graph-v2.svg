@@ -1,63 +1,332 @@
-<svg width="760" height="120" viewBox="0 0 760 120" xmlns="http://www.w3.org/2000/svg">
+<svg
+  width="760"
+  height="112"
+  viewBox="0 0 760 112"
+  xmlns="http://www.w3.org/2000/svg"
+>
+
+  <defs>
+    <linearGradient
+      id="area"
+      x1="0"
+      y1="0"
+      x2="0"
+      y2="1"
+    >
+      <stop
+        offset="0%"
+        stop-color="#ff3131"
+        stop-opacity=".22"
+      />
+
+      <stop
+        offset="100%"
+        stop-color="#ff3131"
+        stop-opacity="0"
+      />
+    </linearGradient>
+
+    <filter
+      id="glow"
+      x="-50%"
+      y="-50%"
+      width="200%"
+      height="200%"
+    >
+      <feGaussianBlur
+        stdDeviation=".7"
+        result="blur"
+      />
+
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
   <style>
-    .title {
-      font-family: "JetBrains Mono", "Consolas", monospace;
-      font-size: 18px;
-      fill: #ff3131;
-      font-weight: 600;
+    text {
+      font-family:
+        "JetBrains Mono",
+        "Cascadia Code",
+        "Consolas",
+        monospace;
     }
 
-    .num {
-      font-family: "JetBrains Mono", "Consolas", monospace;
-      font-size: 22px;
+    .title {
+      fill: #ff3131;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .number {
       fill: #f0f6fc;
+      font-size: 19px;
       font-weight: 700;
     }
 
     .label {
-      font-family: "JetBrains Mono", "Consolas", monospace;
-      font-size: 11px;
       fill: #8b949e;
+      font-size: 9px;
     }
 
     .small {
-      font-family: "JetBrains Mono", "Consolas", monospace;
-      font-size: 9px;
-      fill: #8b949e;
+      fill: #6e7681;
+      font-size: 8px;
+    }
+
+    .month {
+      fill: #6e7681;
+      font-size: 7px;
     }
   </style>
 
-  <rect x="0.5" y="0.5" width="759" height="119" rx="10" fill="#0d1117" stroke="#30363d" />
+  <rect
+    x=".5"
+    y=".5"
+    width="759"
+    height="111"
+    rx="8"
+    fill="#0d1117"
+    stroke="#30363d"
+  />
 
-  <text x="24" y="26" class="title">./stats</text>
+  <text
+    x="20"
+    y="19"
+    class="title"
+  >./stats</text>
 
   
-      <text x="26" y="48" class="num">76</text>
-      <text x="26" y="68" class="label">contributions</text>
-      <rect x="26" y="79" width="24" height="2" rx="1" fill="#ff3131" />
+      <text
+        x="24"
+        y="52"
+        class="number"
+      >77</text>
+
+      <text
+        x="24"
+        y="69"
+        class="label"
+      >contributions</text>
+
+      <rect
+        x="24"
+        y="79"
+        width="20"
+        height="2"
+        rx="1"
+        fill="#ff3131"
+      />
     
-      <text x="130" y="48" class="num">1</text>
-      <text x="130" y="68" class="label">repos</text>
-      <rect x="130" y="79" width="24" height="2" rx="1" fill="#ff3131" />
+      <text
+        x="120"
+        y="52"
+        class="number"
+      >1</text>
+
+      <text
+        x="120"
+        y="69"
+        class="label"
+      >repos</text>
+
+      <rect
+        x="120"
+        y="79"
+        width="20"
+        height="2"
+        rx="1"
+        fill="#ff3131"
+      />
     
-      <text x="224" y="48" class="num">8</text>
-      <text x="224" y="68" class="label">followers</text>
-      <rect x="224" y="79" width="24" height="2" rx="1" fill="#ff3131" />
+      <text
+        x="205"
+        y="52"
+        class="number"
+      >8</text>
+
+      <text
+        x="205"
+        y="69"
+        class="label"
+      >followers</text>
+
+      <rect
+        x="205"
+        y="79"
+        width="20"
+        height="2"
+        rx="1"
+        fill="#ff3131"
+      />
     
-      <text x="316" y="48" class="num">1</text>
-      <text x="316" y="68" class="label">streak</text>
-      <rect x="316" y="79" width="24" height="2" rx="1" fill="#ff3131" />
+      <text
+        x="300"
+        y="52"
+        class="number"
+      >1</text>
+
+      <text
+        x="300"
+        y="69"
+        class="label"
+      >streak</text>
+
+      <rect
+        x="300"
+        y="79"
+        width="20"
+        height="2"
+        rx="1"
+        fill="#ff3131"
+      />
     
 
-  <line x1="400" y1="20" x2="400" y2="96" stroke="#30363d" stroke-width="1" />
+  <text
+    x="405"
+    y="17"
+    class="small"
+  >activity · last 12 months</text>
 
-  <text x="420" y="16" class="small">activity · last 12 months</text>
+  
+      <line
+        x1="405"
+        y1="27.0"
+        x2="730"
+        y2="27.0"
+        stroke="#21262d"
+        stroke-width="1"
+      />
+    
+      <line
+        x1="405"
+        y1="52.0"
+        x2="730"
+        y2="52.0"
+        stroke="#21262d"
+        stroke-width="1"
+      />
+    
+      <line
+        x1="405"
+        y1="77.0"
+        x2="730"
+        y2="77.0"
+        stroke="#21262d"
+        stroke-width="1"
+      />
+    
 
-  <line x1="420" y1="22.0" x2="730" y2="22.0" stroke="#21262d" stroke-width="1" /><line x1="420" y1="44.7" x2="730" y2="44.7" stroke="#21262d" stroke-width="1" /><line x1="420" y1="67.3" x2="730" y2="67.3" stroke="#21262d" stroke-width="1" /><line x1="420" y1="90.0" x2="730" y2="90.0" stroke="#21262d" stroke-width="1" />
+  <polygon
+    points="405,77 405.0,77.0 434.5,77.0 464.1,77.0 493.6,77.0 523.2,77.0 552.7,71.4 582.3,70.5 611.8,76.1 641.4,77.0 670.9,68.7 700.5,77.0 730.0,27.0 730,77"
+    fill="url(#area)"
+  />
 
-  <path d="M 420.0 90.0 L 448.2 90.0 L 476.4 90.0 L 504.5 90.0 L 532.7 90.0 L 560.9 82.3 L 589.1 81.0 L 617.3 88.7 L 645.5 90.0 L 673.6 78.5 L 701.8 90.0 L 730.0 22.0 L 730.0 90.0 L 420.0 90.0 Z" fill="#ff3131" opacity="0.10" />
-  <path d="M 420.0 90.0 L 448.2 90.0 L 476.4 90.0 L 504.5 90.0 L 532.7 90.0 L 560.9 82.3 L 589.1 81.0 L 617.3 88.7 L 645.5 90.0 L 673.6 78.5 L 701.8 90.0 L 730.0 22.0" fill="none" stroke="#ff3131" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+  <polyline
+    points="405.0,77.0 434.5,77.0 464.1,77.0 493.6,77.0 523.2,77.0 552.7,71.4 582.3,70.5 611.8,76.1 641.4,77.0 670.9,68.7 700.5,77.0 730.0,27.0"
+    fill="none"
+    stroke="#ff3131"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    filter="url(#glow)"
+  />
 
-  <circle cx="420.0" cy="90.0" r="2.2" fill="#ff3131" stroke="#ff3131" stroke-width="0" /><circle cx="448.2" cy="90.0" r="2.2" fill="#ff3131" stroke="#ff3131" stroke-width="0" /><circle cx="476.4" cy="90.0" r="2.2" fill="#ff3131" stroke="#ff3131" stroke-width="0" /><circle cx="504.5" cy="90.0" r="2.2" fill="#ff3131" stroke="#ff3131" stroke-width="0" /><circle cx="532.7" cy="90.0" r="2.2" fill="#ff3131" stroke="#ff3131" stroke-width="0" /><circle cx="560.9" cy="82.3" r="2.2" fill="#ff3131" stroke="#ff3131" stroke-width="0" /><circle cx="589.1" cy="81.0" r="2.2" fill="#ff3131" stroke="#ff3131" stroke-width="0" /><circle cx="617.3" cy="88.7" r="2.2" fill="#ff3131" stroke="#ff3131" stroke-width="0" /><circle cx="645.5" cy="90.0" r="2.2" fill="#ff3131" stroke="#ff3131" stroke-width="0" /><circle cx="673.6" cy="78.5" r="2.2" fill="#ff3131" stroke="#ff3131" stroke-width="0" /><circle cx="701.8" cy="90.0" r="2.2" fill="#ff3131" stroke="#ff3131" stroke-width="0" /><circle cx="730.0" cy="22.0" r="3.2" fill="#f0f6fc" stroke="#ff3131" stroke-width="2" />
-  <text x="420.0" y="108" text-anchor="middle" class="small">oct</text><text x="448.2" y="108" text-anchor="middle" class="small">nov</text><text x="476.4" y="108" text-anchor="middle" class="small">dec</text><text x="504.5" y="108" text-anchor="middle" class="small">jan</text><text x="532.7" y="108" text-anchor="middle" class="small">feb</text><text x="560.9" y="108" text-anchor="middle" class="small">mar</text><text x="589.1" y="108" text-anchor="middle" class="small">apr</text><text x="617.3" y="108" text-anchor="middle" class="small">may</text><text x="645.5" y="108" text-anchor="middle" class="small">jun</text><text x="673.6" y="108" text-anchor="middle" class="small">jul</text><text x="701.8" y="108" text-anchor="middle" class="small">aug</text><text x="730.0" y="108" text-anchor="middle" class="small">sep</text>
+  <circle
+    cx="730.0"
+    cy="27.0"
+    r="3"
+    fill="#f0f6fc"
+    stroke="#ff3131"
+    stroke-width="2"
+  />
+
+  
+      <text
+        x="405.0"
+        y="99"
+        text-anchor="middle"
+        class="month"
+      >oct</text>
+    
+      <text
+        x="434.5"
+        y="99"
+        text-anchor="middle"
+        class="month"
+      >nov</text>
+    
+      <text
+        x="464.1"
+        y="99"
+        text-anchor="middle"
+        class="month"
+      >dec</text>
+    
+      <text
+        x="493.6"
+        y="99"
+        text-anchor="middle"
+        class="month"
+      >jan</text>
+    
+      <text
+        x="523.2"
+        y="99"
+        text-anchor="middle"
+        class="month"
+      >feb</text>
+    
+      <text
+        x="552.7"
+        y="99"
+        text-anchor="middle"
+        class="month"
+      >mar</text>
+    
+      <text
+        x="582.3"
+        y="99"
+        text-anchor="middle"
+        class="month"
+      >apr</text>
+    
+      <text
+        x="611.8"
+        y="99"
+        text-anchor="middle"
+        class="month"
+      >may</text>
+    
+      <text
+        x="641.4"
+        y="99"
+        text-anchor="middle"
+        class="month"
+      >jun</text>
+    
+      <text
+        x="670.9"
+        y="99"
+        text-anchor="middle"
+        class="month"
+      >jul</text>
+    
+      <text
+        x="700.5"
+        y="99"
+        text-anchor="middle"
+        class="month"
+      >aug</text>
+    
+      <text
+        x="730.0"
+        y="99"
+        text-anchor="middle"
+        class="month"
+      >sep</text>
+    
+
 </svg>
