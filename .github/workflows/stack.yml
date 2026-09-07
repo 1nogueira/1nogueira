@@ -1,0 +1,241 @@
+name: stack card
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate stack card
+        run: |
+          python <<'PY'
+          import os
+          import base64
+          import urllib.request
+
+          W = 760
+          H = 102
+
+          BG = "#0d1117"
+          BORDER = "#30363d"
+          RED = "#ff3131"
+          TEXT = "#f0f6fc"
+          MUTED = "#8b949e"
+          PILL = "#21262d"
+
+          urls = {
+              "js": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg",
+              "ts": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg",
+              "py": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg",
+              "go": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg",
+              "php": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg",
+              "rust": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/rust/rust-original.svg",
+
+              "linux": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg",
+              "bash": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/bash/bash-original.svg",
+
+              "cpp": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg",
+              "cs": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg",
+              "mysql": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg",
+
+              "kali": "https://cdn.simpleicons.org/kalilinux/FF3131",
+          }
+
+          def download(url):
+              request = urllib.request.Request(
+                  url,
+                  headers={
+                      "User-Agent": "1nogueira-profile",
+                      "Accept": "image/svg+xml,*/*"
+                  }
+              )
+
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  return response.read()
+
+          def data_uri(url):
+              data = download(url)
+              encoded = base64.b64encode(data).decode("ascii")
+
+              return f"data:image/svg+xml;base64,{encoded}"
+
+          icons = {}
+
+          for name, url in urls.items():
+              print(f"Downloading {name}...")
+              icons[name] = data_uri(url)
+
+          def image(name, x, y, size=30):
+              return f'''
+              <image
+                href="{icons[name]}"
+                x="{x}"
+                y="{y}"
+                width="{size}"
+                height="{size}"
+                preserveAspectRatio="xMidYMid meet"
+              />
+              '''
+
+          def pill(text, x, y, width):
+              return f'''
+              <rect
+                x="{x}"
+                y="{y}"
+                width="{width}"
+                height="22"
+                rx="5"
+                fill="{PILL}"
+              />
+
+              <text
+                x="{x + width / 2}"
+                y="{y + 15}"
+                text-anchor="middle"
+                class="pill"
+              >{text}</text>
+              '''
+
+          svg = f'''<svg
+            width="{W}"
+            height="{H}"
+            viewBox="0 0 {W} {H}"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+
+            <style>
+              text {{
+                font-family:
+                  "JetBrains Mono",
+                  "Cascadia Code",
+                  "Consolas",
+                  monospace;
+              }}
+
+              .title {{
+                fill: {RED};
+                font-size: 13px;
+                font-weight: 700;
+              }}
+
+              .pill {{
+                fill: {TEXT};
+                font-size: 9px;
+                font-weight: 600;
+              }}
+
+              .sub {{
+                fill: {MUTED};
+                font-size: 8px;
+              }}
+            </style>
+
+            <rect
+              x=".5"
+              y=".5"
+              width="{W - 1}"
+              height="{H - 1}"
+              rx="10"
+              fill="{BG}"
+              stroke="{BORDER}"
+            />
+
+            <text
+              x="18"
+              y="22"
+              class="title"
+            >./stack</text>
+
+
+            {pill("main", 18, 50, 42)}
+
+            {image("js",   70, 46)}
+            {image("ts",  104, 46)}
+            {image("py",  138, 46)}
+            {image("go",  172, 46)}
+            {image("php", 206, 46)}
+            {image("rust",240, 46)}
+
+
+            {pill("sys", 294, 50, 34)}
+
+            {image("linux", 338, 46)}
+            {image("bash",  372, 46)}
+
+
+            {pill("learning", 426, 50, 64)}
+
+            {image("cpp",   500, 46)}
+            {image("cs",    534, 46)}
+            {image("rust",  568, 46)}
+            {image("mysql", 602, 46)}
+            {image("kali",  636, 46)}
+
+
+            {pill("hacking", 678, 50, 62)}
+
+
+            <rect
+              x="18"
+              y="86"
+              width="42"
+              height="2"
+              rx="1"
+              fill="{RED}"
+            />
+
+            <rect
+              x="294"
+              y="86"
+              width="34"
+              height="2"
+              rx="1"
+              fill="{RED}"
+            />
+
+            <rect
+              x="426"
+              y="86"
+              width="64"
+              height="2"
+              rx="1"
+              fill="{RED}"
+            />
+
+          </svg>'''
+
+          os.makedirs("assets", exist_ok=True)
+
+          with open(
+              "assets/stack-card.svg",
+              "w",
+              encoding="utf-8"
+          ) as file:
+              file.write(svg)
+
+          print("assets/stack-card.svg generated")
+
+          PY
+
+      - name: Commit stack card
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add assets/stack-card.svg
+
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+
+          git commit -m "update stack card"
+          git push
