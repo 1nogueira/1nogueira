@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/name-title.svg?v=6" width="100%" alt="Nogueira" />
+  <img src="./assets/name-title-v2.svg" width="100%" alt="Nogueira" />
 </p>
 
 `Full-Stack Developer`
