@@ -1,0 +1,154 @@
+<svg width="900" height="90" viewBox="0 0 900 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fadeBottom" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FF3131" stop-opacity="0"/>
+      <stop offset="20%" stop-color="#FF3131" stop-opacity="0.35"/>
+      <stop offset="70%" stop-color="#FF3131" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#FF3131" stop-opacity="0"/>
+    </linearGradient>
+
+    <mask id="fadeMask">
+      <rect width="900" height="90" fill="url(#fadeBottom)"/>
+    </mask>
+
+    <style>
+      .bg {
+        fill: transparent;
+      }
+
+      .rain {
+        font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+        font-size: 10px;
+        letter-spacing: 1px;
+        fill: #FF3131;
+      }
+
+      .dim { opacity: 0.18; }
+      .mid { opacity: 0.36; }
+      .high { opacity: 0.72; }
+
+      .scanline {
+        stroke: rgba(255, 49, 49, 0.12);
+        stroke-width: 1;
+      }
+    </style>
+  </defs>
+
+  <rect class="bg" width="900" height="90"/>
+
+  <!-- linha discreta pra dar acabamento -->
+  <line x1="0" y1="89.5" x2="900" y2="89.5" class="scanline"/>
+
+  <g mask="url(#fadeMask)">
+    <!-- coluna 1 -->
+    <g class="rain dim">
+      <text x="20" y="-40">01010110</text>
+      <text x="20" y="-20">0x2F</text>
+      <text x="20" y="0">10100101</text>
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 130" dur="4.9s" repeatCount="indefinite"/>
+    </g>
+
+    <!-- coluna 2 -->
+    <g class="rain mid">
+      <text x="75" y="-55">sudo</text>
+      <text x="75" y="-35">chmod</text>
+      <text x="75" y="-15">011001</text>
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 145" dur="6.4s" repeatCount="indefinite"/>
+    </g>
+
+    <!-- coluna 3 -->
+    <g class="rain high">
+      <text x="135" y="-50">while(1)</text>
+      <text x="135" y="-30">{}</text>
+      <text x="135" y="-10">0xDEAD</text>
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 150" dur="7.2s" repeatCount="indefinite"/>
+    </g>
+
+    <!-- coluna 4 -->
+    <g class="rain dim">
+      <text x="205" y="-38">00101101</text>
+      <text x="205" y="-18">exec()</text>
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 128" dur="5.5s" repeatCount="indefinite"/>
+    </g>
+
+    <!-- coluna 5 -->
+    <g class="rain mid">
+      <text x="270" y="-60">/dev/null</text>
+      <text x="270" y="-40">100101</text>
+      <text x="270" y="-20">root</text>
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 150" dur="6.9s" repeatCount="indefinite"/>
+    </g>
+
+    <!-- coluna 6 -->
+    <g class="rain high">
+      <text x="340" y="-48">printf()</text>
+      <text x="340" y="-28">0110</text>
+      <text x="340" y="-8">0xFF</text>
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 142" dur="5.8s" repeatCount="indefinite"/>
+    </g>
+
+    <!-- coluna 7 -->
+    <g class="rain dim">
+      <text x="405" y="-52">10101010</text>
+      <text x="405" y="-32">fork()</text>
+      <text x="405" y="-12">null</text>
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 150" dur="7.7s" repeatCount="indefinite"/>
+    </g>
+
+    <!-- coluna 8 -->
+    <g class="rain mid">
+      <text x="470" y="-45">payload</text>
+      <text x="470" y="-25">0x13</text>
+      <text x="470" y="-5">101101</text>
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 137" dur="6.1s" repeatCount="indefinite"/>
+    </g>
+
+    <!-- coluna 9 -->
+    <g class="rain high">
+      <text x="535" y="-62">access()</text>
+      <text x="535" y="-42">110011</text>
+      <text x="535" y="-22">sudo</text>
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 154" dur="7.4s" repeatCount="indefinite"/>
+    </g>
+
+    <!-- coluna 10 -->
+    <g class="rain dim">
+      <text x="605" y="-50">eth0</text>
+      <text x="605" y="-30">001101</text>
+      <text x="605" y="-10">ssh</text>
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 132" dur="5.2s" repeatCount="indefinite"/>
+    </g>
+
+    <!-- coluna 11 -->
+    <g class="rain mid">
+      <text x="665" y="-58">hashcat</text>
+      <text x="665" y="-38">0xC0DE</text>
+      <text x="665" y="-18">111000</text>
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 150" dur="6.6s" repeatCount="indefinite"/>
+    </g>
+
+    <!-- coluna 12 -->
+    <g class="rain high">
+      <text x="735" y="-48">./run</text>
+      <text x="735" y="-28">010110</text>
+      <text x="735" y="-8">bash</text>
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 140" dur="5.7s" repeatCount="indefinite"/>
+    </g>
+
+    <!-- coluna 13 -->
+    <g class="rain dim">
+      <text x="795" y="-54">nmap</text>
+      <text x="795" y="-34">101111</text>
+      <text x="795" y="-14">grep</text>
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 148" dur="7.1s" repeatCount="indefinite"/>
+    </g>
+
+    <!-- coluna 14 -->
+    <g class="rain mid">
+      <text x="850" y="-42">0xBEEF</text>
+      <text x="850" y="-22">kali</text>
+      <text x="850" y="-2">011010</text>
+      <animateTransform attributeName="transform" type="translate" from="0 0" to="0 132" dur="5.4s" repeatCount="indefinite"/>
+    </g>
+  </g>
+</svg>
