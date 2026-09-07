@@ -1,0 +1,150 @@
+name: languages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate languages card
+        run: |
+          python <<'PY'
+          import os
+
+          width = 760
+          height = 96
+
+          languages = [
+              ("JS", "JavaScript"),
+              ("TS", "TypeScript"),
+              ("PY", "Python"),
+              ("GO", "Go"),
+              ("PHP", "PHP")
+          ]
+
+          positions = [24, 168, 312, 456, 600]
+
+          blocks = ""
+
+          for (short, name), x in zip(languages, positions):
+              blocks += f"""
+                <text
+                  x="{x}"
+                  y="50"
+                  class="number"
+                >{short}</text>
+
+                <text
+                  x="{x}"
+                  y="66"
+                  class="label"
+                >{name}</text>
+
+                <rect
+                  x="{x}"
+                  y="75"
+                  width="24"
+                  height="2"
+                  rx="1"
+                  fill="#ff3131"
+                />
+              """
+
+          svg = f"""<svg
+            width="{width}"
+            height="{height}"
+            viewBox="0 0 {width} {height}"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+
+            <style>
+              text {{
+                font-family:
+                  "JetBrains Mono",
+                  "Cascadia Code",
+                  "Consolas",
+                  monospace;
+              }}
+
+              .title {{
+                fill: #ff3131;
+                font-size: 12px;
+                font-weight: 700;
+              }}
+
+              .number {{
+                fill: #f0f6fc;
+                font-size: 19px;
+                font-weight: 700;
+              }}
+
+              .label {{
+                fill: #8b949e;
+                font-size: 9px;
+              }}
+
+              .small {{
+                fill: #6e7681;
+                font-size: 8px;
+              }}
+            </style>
+
+            <rect
+              x=".5"
+              y=".5"
+              width="{width - 1}"
+              height="{height - 1}"
+              rx="8"
+              fill="#0d1117"
+              stroke="#30363d"
+            />
+
+            <text
+              x="20"
+              y="19"
+              class="title"
+            >./languages</text>
+
+            <text
+              x="655"
+              y="19"
+              class="small"
+            >top languages</text>
+
+            {blocks}
+
+          </svg>"""
+
+          os.makedirs("assets", exist_ok=True)
+
+          with open(
+              "assets/languages-card.svg",
+              "w",
+              encoding="utf-8"
+          ) as file:
+              file.write(svg)
+
+          PY
+
+      - name: Commit languages card
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add assets/languages-card.svg
+
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+
+          git commit -m "update languages card"
+          git push
