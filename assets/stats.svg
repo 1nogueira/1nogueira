@@ -1,0 +1,168 @@
+<svg width="720" height="88" viewBox="0 0 720 88" xmlns="http://www.w3.org/2000/svg">
+
+  <style>
+    .num {
+      font-family: "JetBrains Mono", "Consolas", monospace;
+      font-size: 22px;
+      font-weight: 600;
+      fill: #f0f6fc;
+    }
+
+    .label {
+      font-family: "JetBrains Mono", "Consolas", monospace;
+      font-size: 11px;
+      fill: #8b949e;
+    }
+
+    .accent {
+      fill: #ff3131;
+    }
+
+    .line {
+      stroke: #30363d;
+      stroke-width: 1;
+    }
+  </style>
+
+  <rect
+    x="0.5"
+    y="0.5"
+    width="719"
+    height="87"
+    rx="7"
+    fill="#0d1117"
+    stroke="#30363d"
+  />
+
+      <text
+        class="num"
+        x="90.0"
+        y="40"
+        text-anchor="middle"
+      >
+        35
+      </text>
+
+      <text
+        class="label"
+        x="90.0"
+        y="61"
+        text-anchor="middle"
+      >
+        contributions
+      </text>
+
+      <rect
+        class="accent"
+        x="78.0"
+        y="73"
+        width="24"
+        height="2"
+        rx="1"
+      />
+    
+          <line
+            class="line"
+            x1="180.0"
+            y1="18"
+            x2="180.0"
+            y2="70"
+          />
+        
+      <text
+        class="num"
+        x="270.0"
+        y="40"
+        text-anchor="middle"
+      >
+        1
+      </text>
+
+      <text
+        class="label"
+        x="270.0"
+        y="61"
+        text-anchor="middle"
+      >
+        repos
+      </text>
+
+      <rect
+        class="accent"
+        x="258.0"
+        y="73"
+        width="24"
+        height="2"
+        rx="1"
+      />
+    
+          <line
+            class="line"
+            x1="360.0"
+            y1="18"
+            x2="360.0"
+            y2="70"
+          />
+        
+      <text
+        class="num"
+        x="450.0"
+        y="40"
+        text-anchor="middle"
+      >
+        8
+      </text>
+
+      <text
+        class="label"
+        x="450.0"
+        y="61"
+        text-anchor="middle"
+      >
+        followers
+      </text>
+
+      <rect
+        class="accent"
+        x="438.0"
+        y="73"
+        width="24"
+        height="2"
+        rx="1"
+      />
+    
+          <line
+            class="line"
+            x1="540.0"
+            y1="18"
+            x2="540.0"
+            y2="70"
+          />
+        
+      <text
+        class="num"
+        x="630.0"
+        y="40"
+        text-anchor="middle"
+      >
+        1
+      </text>
+
+      <text
+        class="label"
+        x="630.0"
+        y="61"
+        text-anchor="middle"
+      >
+        streak
+      </text>
+
+      <rect
+        class="accent"
+        x="618.0"
+        y="73"
+        width="24"
+        height="2"
+        rx="1"
+      />
+    </svg>
