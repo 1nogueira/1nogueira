@@ -2,9 +2,9 @@
   <img src="./assets/name-title-v2.svg" width="100%" alt="Nogueira" />
 </p>
 
-`Full-Stack Developer`
+-----
 
-<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=500&size=13&duration=2300&pause=800&color=FF3131&vCenter=true&width=520&height=18&lines=full+stack+developer+%40+OH+Team;backend+%2F+frontend;linux+%2F+terminal;learning+Kali+Linux+%2B+hacking" />
+<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=500&size=13&duration=2300&pause=800&color=FF3131&vCenter=true&width=520&height=18&lines=full+stack+developer;web+development;backend+%2F+frontend;linux+%2F+terminal;building+real+projects" />
 
 I work with backend and frontend, mainly using **JavaScript, TypeScript, Python, Go, and PHP**.<br>
 I use **Linux and the terminal** in some projects, and I’m currently learning **C++, C#, Rust, SQL, and hacking using Kali Linux**.
