@@ -9,7 +9,7 @@
 I work with backend and frontend, mainly using **JavaScript, TypeScript, Python, Go, and PHP**.<br>
 I use **Linux and the terminal** in some projects, and I’m currently learning **C++, C#, Rust, SQL, and hacking using Kali Linux**.
 
-<div><img src="https://img.shields.io/badge/OH%20TEAM-ff3131?style=flat-square&labelColor=161b22" />&nbsp;&nbsp;<img src="https://img.shields.io/github/followers/1nogueira?style=flat-square&label=followers&labelColor=161b22&color=ff3131" />&nbsp;&nbsp;<img src="https://img.shields.io/badge/linux-terminal-30363d?style=flat-square&labelColor=161b22" />&nbsp;&nbsp;<img src="https://img.shields.io/badge/kali%20%2B%20hacking-learning-ff3131?style=flat-square&labelColor=161b22" /></div>
+<div><img src="https://img.shields.io/badge/DevON%20Brasil-ff3131?style=flat-square&labelColor=161b22" />&nbsp;&nbsp;<img src="https://img.shields.io/github/followers/1nogueira?style=flat-square&label=followers&labelColor=161b22&color=ff3131" />&nbsp;&nbsp;<img src="https://img.shields.io/badge/linux-terminal-30363d?style=flat-square&labelColor=161b22" />&nbsp;&nbsp;<img src="https://img.shields.io/badge/kali%20%2B%20hacking-learning-ff3131?style=flat-square&labelColor=161b22" /></div>
 
 <img src="./assets/red-rain.svg" width="100%" alt="code rain" />
 
